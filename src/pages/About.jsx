@@ -1,4 +1,38 @@
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabaseClient.js'
+
 function About() {
+  const [team, setTeam] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const loadTeam = async () => {
+      if (!supabase) {
+        setError(
+          'Conecta Supabase para mostrar el equipo de forma dinámica.',
+        )
+        setLoading(false)
+        return
+      }
+
+      const { data, error: dbError } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('active', true)
+        .order('created_at', { ascending: true })
+
+      if (dbError) {
+        setError(dbError.message ?? 'No se pudo cargar el equipo.')
+      } else {
+        setTeam(data ?? [])
+      }
+      setLoading(false)
+    }
+
+    loadTeam()
+  }, [])
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
       <div className="grid gap-10 md:grid-cols-[1.2fr,1fr] md:items-start">
@@ -60,9 +94,143 @@ function About() {
           </ul>
         </section>
       </div>
+
+      <section className="mt-10 space-y-4">
+        <div className="space-y-2 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
+            equipo
+          </p>
+          <h3 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
+            Conoce a quienes cuidan de ti.
+          </h3>
+          <p className="mx-auto max-w-2xl text-sm text-slate-600 md:text-base">
+            Cada miembro del equipo tiene su estilo y especialidad. Aquí puedes
+            ver sus horarios, experiencia y una forma de contactarlos.
+          </p>
+        </div>
+
+        {loading && (
+          <p className="text-center text-xs text-slate-600">
+            Cargando equipo...
+          </p>
+        )}
+        {error && !loading && (
+          <p className="mx-auto max-w-xl rounded-2xl bg-rose-50 px-4 py-3 text-center text-xs text-rose-700">
+            {error}
+          </p>
+        )}
+        {!loading && !error && team.length === 0 && (
+          <p className="text-center text-xs text-slate-600">
+            Aún no hay miembros cargados. Puedes añadirlos desde el panel de
+            administración.
+          </p>
+        )}
+
+        {!loading && !error && team.length > 0 && (
+          <div className="mt-2 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {team.map((member) => {
+              const currentYear = new Date().getFullYear()
+              const startYear = member.specialization_start_year
+              const years =
+                typeof startYear === 'number' && startYear > 1900
+                  ? currentYear - startYear
+                  : null
+
+              let parsedSchedule = null
+              if (member.schedule) {
+                try {
+                  const maybe = JSON.parse(member.schedule)
+                  if (Array.isArray(maybe)) {
+                    parsedSchedule = maybe
+                  }
+                } catch {
+                  parsedSchedule = null
+                }
+              }
+
+              return (
+                <article
+                  key={member.id}
+                  className="flex flex-col rounded-2xl border border-rose-100 bg-white/80 p-4 text-xs text-slate-700 shadow-sm"
+                >
+                  <div className="mb-3 flex items-center gap-3">
+                    {member.photo_url && (
+                      <div className="h-14 w-14 overflow-hidden rounded-full bg-rose-50">
+                        <img
+                          src={member.photo_url}
+                          alt={member.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {member.name}
+                      </p>
+                      {member.role && (
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-rose-600">
+                          {member.role}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {member.description && (
+                    <p className="text-[11px] text-slate-600">
+                      {member.description}
+                    </p>
+                  )}
+                  <div className="mt-3 space-y-1 text-[11px] text-slate-600">
+                    {years && (
+                      <p>
+                        <span className="font-semibold text-slate-800">
+                          Experiencia:
+                        </span>{' '}
+                        {years} años
+                      </p>
+                    )}
+                    {parsedSchedule ? (
+                      <div>
+                        <p>
+                          <span className="font-semibold text-slate-800">
+                            Horarios:
+                          </span>
+                        </p>
+                        <ul className="mt-1 space-y-0.5">
+                          {parsedSchedule.map((slot) => (
+                            <li
+                              key={slot.id}
+                              className="text-[11px] text-slate-600"
+                            >
+                              {slot.label}: {slot.from} – {slot.to}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : member.schedule ? (
+                      <p>
+                        <span className="font-semibold text-slate-800">
+                          Horarios:
+                        </span>{' '}
+                        {member.schedule}
+                      </p>
+                    ) : null}
+                    {member.phone && (
+                      <p>
+                        <span className="font-semibold text-slate-800">
+                          Teléfono:
+                        </span>{' '}
+                        {member.phone}
+                      </p>
+                    )}
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        )}
+      </section>
     </main>
   )
 }
 
 export default About
-

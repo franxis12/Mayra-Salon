@@ -6,6 +6,10 @@ import Services from './pages/Services.jsx'
 import Gallery from './pages/Gallery.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
+import Store from './pages/Store.jsx'
+import Checkout from './pages/Checkout.jsx'
+import Login from './pages/Login.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 
 function App() {
   return (
@@ -17,6 +21,10 @@ function App() {
         <Route path="/galeria" element={<Gallery />} />
         <Route path="/nosotras" element={<About />} />
         <Route path="/contacto" element={<Contact />} />
+        <Route path="/tienda" element={<Store />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />

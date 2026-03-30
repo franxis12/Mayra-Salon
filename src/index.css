@@ -1,1 +1,262 @@
 @import "tailwindcss";
+
+:root {
+  /* Colores principales (puedes cambiarlos luego en un solo lugar) */
+  --color-primary: #d50000; /* rosa fuerte */
+  --color-primary-soft: #fec7d7;
+  --color-primary-soft-alt: #ffe4ed;
+  --color-accent: #fb923c; /* naranja suave para detalles */
+  --color-accent-soft: #ffedd5;
+
+  /* Fondo general y secciones */
+  --color-page-bg: #fff7fa;
+  --color-section-bg: #ffffff;
+  --color-card-bg: #ffffff;
+  --color-hero-gradient: linear-gradient(
+    135deg,
+    #ffe4ed,
+    #fff7fa,
+    #fff7fa,
+    #ffedd5
+  );
+
+  /* Texto */
+  --color-text-main: #020617;
+  --color-text-soft: #475569;
+  --color-text-muted: #64748b;
+
+  /* Bordes y sombras suaves (para tarjetas, inputs, etc.) */
+  --color-border-soft: rgba(248, 113, 113, 0.2);
+  --shadow-soft: 0 18px 45px rgba(148, 27, 87, 0.12);
+
+  /* Radios y espaciados “redondeados” del salón */
+  --radius-full: 999px;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
+
+  /* Tipografía base (puedes cambiar por una fuente de marca) */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--color-text-main);
+  background: var(--color-page-bg);
+}
+
+/* Contenedor principal de la app (por si quieres usarlo en lugar del gradiente de Tailwind) */
+.app-shell {
+  background: var(--color-hero-gradient);
+}
+
+/* Ejemplos de utilidades basadas en variables para usar en JSX:
+   className="btn-primary"
+   className="card-soft"
+   Puedes ajustarlas o borrarlas según tu diseño. */
+.btn-primary {
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 150ms ease, box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.btn-primary:hover {
+  background-color: #be123c;
+  box-shadow: 0 22px 55px rgba(148, 27, 87, 0.2);
+  transform: translateY(-1px);
+}
+
+.card-soft {
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.chip-soft {
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-soft-alt);
+  color: var(--color-text-main);
+  padding: 0.25rem 0.9rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Mapeo de las clases Tailwind más usadas al sistema de variables.
+   Así, al cambiar las variables en :root se actualiza el tema completo. */
+
+/* Fondo y texto principal */
+.text-slate-900 {
+  color: var(--color-text-main) !important;
+}
+
+.text-slate-800,
+.text-slate-700 {
+  color: var(--color-text-soft) !important;
+}
+
+.text-slate-600 {
+  color: var(--color-text-soft) !important;
+}
+
+.text-slate-500,
+.text-slate-400 {
+  color: var(--color-text-muted) !important;
+}
+
+.text-white {
+  color: #ffffff !important; /* contraste fijo, pero puedes cambiarlo si usas otro fondo */
+}
+
+.bg-rose-50 {
+  background-color: var(--color-primary-soft-alt) !important;
+}
+
+.bg-rose-100 {
+  background-color: var(--color-primary-soft) !important;
+}
+
+.text-rose-600 {
+  color: var(--color-primary) !important;
+}
+
+.text-rose-700 {
+  color: color-mix(in srgb, var(--color-primary) 85%, #020617 15%) !important;
+}
+
+.border-rose-100 {
+  border-color: var(--color-border-soft) !important;
+}
+
+.border-rose-200 {
+  border-color: color-mix(in srgb, var(--color-border-soft) 70%, #ffffff 30%)
+    !important;
+}
+
+.border-rose-300 {
+  border-color: color-mix(in srgb, var(--color-primary-soft) 70%, #ffffff 30%)
+    !important;
+}
+
+.bg-rose-600 {
+  background-color: var(--color-primary) !important;
+}
+
+.hover\:bg-rose-700:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 85%, #000 15%)
+    !important;
+}
+
+.ring-rose-200 {
+  --tw-ring-color: color-mix(
+    in srgb,
+    var(--color-primary-soft) 80%,
+    #ffffff 20%
+  ) !important;
+}
+
+.focus\:ring:focus {
+  box-shadow: 0 0 0 1px
+      color-mix(in srgb, var(--color-primary-soft) 50%, #ffffff 50%),
+    0 0 0 4px
+      color-mix(in srgb, var(--color-primary-soft) 60%, rgba(0, 0, 0, 0) 40%);
+}
+
+.shadow-rose-100,
+.shadow-sm {
+  box-shadow: var(--shadow-soft) !important;
+}
+
+/* Blancos y tarjetas */
+.bg-white {
+  background-color: var(--color-section-bg) !important;
+}
+
+.bg-white\/80 {
+  background-color: color-mix(
+    in srgb,
+    var(--color-section-bg) 80%,
+    transparent 20%
+  ) !important;
+}
+
+.bg-white\/90 {
+  background-color: color-mix(
+    in srgb,
+    var(--color-section-bg) 90%,
+    transparent 10%
+  ) !important;
+}
+
+.bg-white\/60 {
+  background-color: color-mix(
+    in srgb,
+    var(--color-section-bg) 60%,
+    transparent 40%
+  ) !important;
+}
+
+.text-slate-700 {
+  color: var(--color-text-soft) !important;
+}
+
+/* Gradientes de fondo usados en App y Gallery */
+.from-rose-50 {
+  --tw-gradient-from: var(--color-primary-soft-alt) var(--tw-gradient-from-position);
+  --tw-gradient-to: color-mix(
+      in srgb,
+      var(--color-primary-soft-alt) 0%,
+      transparent 100%
+    )
+    var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-rose-50 {
+  --tw-gradient-via: var(--color-primary-soft-alt) var(--tw-gradient-via-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via),
+    var(--tw-gradient-to);
+}
+
+.to-amber-50 {
+  --tw-gradient-to: var(--color-accent-soft) var(--tw-gradient-to-position);
+}
+
+.from-rose-100,
+.from-rose-200,
+.from-rose-300,
+.from-rose-400 {
+  --tw-gradient-from: var(--color-primary-soft) var(--tw-gradient-from-position);
+  --tw-gradient-to: color-mix(
+      in srgb,
+      var(--color-primary-soft) 0%,
+      transparent 100%
+    )
+    var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-amber-300,
+.via-amber-300,
+.via-amber-200,
+.from-pink-300 {
+  --tw-gradient-from: var(--color-accent) var(--tw-gradient-from-position);
+  --tw-gradient-to: color-mix(
+      in srgb,
+      var(--color-accent) 0%,
+      transparent 100%
+    )
+    var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}

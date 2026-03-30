@@ -1,31 +1,33 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import logoMayra from "../assets/Images/Logo Mayra.png";
 
 const navLinkBase =
-  'text-sm font-medium tracking-wide transition-colors px-3 py-2 rounded-full'
+  "text-sm font-medium tracking-wide transition-colors px-3 py-2 rounded-full";
 
 const getNavLinkClass = ({ isActive }) =>
   [
     navLinkBase,
     isActive
-      ? 'bg-rose-600 text-white shadow-sm'
-      : 'text-slate-700 hover:bg-rose-50 hover:text-rose-700',
-  ].join(' ')
+      ? "bg-rose-600 text-white shadow-sm"
+      : "text-slate-700 hover:bg-rose-50 hover:text-rose-700",
+  ].join(" ");
 
 function Navbar() {
+  const { user, isAdmin, signOut } = useAuth();
+
   return (
     <header className="sticky top-0 z-20 border-b border-rose-100 bg-white/80 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <NavLink to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-600 text-white shadow-sm">
-            <span className="text-lg font-semibold">M</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full text-white shadow-sm">
+            <img src={logoMayra}></img>
           </div>
           <div className="leading-tight">
             <p className="text-sm font-semibold tracking-wide text-slate-900">
-              Mayra Salon
+              D'Mayra Salon
             </p>
-            <p className="text-xs text-slate-500">
-              Belleza &amp; cuidado personalizado
-            </p>
+            <p className="text-xs text-slate-500">&amp; Beauty Supply</p>
           </div>
         </NavLink>
 
@@ -35,6 +37,9 @@ function Navbar() {
           </NavLink>
           <NavLink to="/servicios" className={getNavLinkClass}>
             Servicios
+          </NavLink>
+          <NavLink to="/tienda" className={getNavLinkClass}>
+            Tienda
           </NavLink>
           <NavLink to="/galeria" className={getNavLinkClass}>
             Galería
@@ -47,16 +52,51 @@ function Navbar() {
           </NavLink>
         </div>
 
-        <NavLink
-          to="/contacto"
-          className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
-        >
-          Reserva tu cita
-        </NavLink>
+        <div className="flex items-center gap-2">
+          {isAdmin && (
+            <NavLink
+              to="/dashboard"
+              className="hidden rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 md:inline-flex"
+            >
+              Panel
+            </NavLink>
+          )}
+          {user ? (
+            <>
+              <button
+                type="button"
+                onClick={signOut}
+                className="hidden text-xs font-semibold text-slate-600 underline-offset-4 hover:underline md:inline-block"
+              >
+                Cerrar sesión
+              </button>
+              <NavLink
+                to="/contacto"
+                className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
+              >
+                Reserva tu cita
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="hidden text-xs font-semibold text-slate-600 underline-offset-4 hover:underline md:inline-block"
+              >
+                Iniciar sesión
+              </Link>
+              <NavLink
+                to="/contacto"
+                className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
+              >
+                Reserva tu cita
+              </NavLink>
+            </>
+          )}
+        </div>
       </nav>
     </header>
-  )
+  );
 }
 
-export default Navbar
-
+export default Navbar;
