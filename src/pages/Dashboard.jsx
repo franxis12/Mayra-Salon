@@ -49,6 +49,10 @@ function Dashboard() {
   const [locationRows, setLocationRows] = useState([])
   const [locationsLoading, setLocationsLoading] = useState(false)
   const [locationsError, setLocationsError] = useState('')
+  const [showProductForm, setShowProductForm] = useState(false)
+  const [showTeamForm, setShowTeamForm] = useState(false)
+  const [activeTab, setActiveTab] = useState('products')
+  const [productSearch, setProductSearch] = useState('')
 
   const [teamForm, setTeamForm] = useState({
     name: '',
@@ -534,6 +538,20 @@ function Dashboard() {
     )
   }
 
+  const normalizedSearch = productSearch.trim().toLowerCase()
+  const filteredProducts = normalizedSearch
+    ? products.filter((product) => {
+        const name = (product.name ?? '').toLowerCase()
+        const sku = (product.sku ?? '').toLowerCase()
+        const category = (product.category ?? '').toLowerCase()
+        return (
+          name.includes(normalizedSearch) ||
+          sku.includes(normalizedSearch) ||
+          category.includes(normalizedSearch)
+        )
+      })
+    : products
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
       <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
@@ -543,12 +561,47 @@ function Dashboard() {
         Manage store products and the salon team.
       </p>
 
-      <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1.4fr),minmax(0,1.6fr)]">
-        <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900">
-            Add new product
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+      <div className="mt-6 inline-flex rounded-full bg-rose-50 p-1 text-xs">
+        <button
+          type="button"
+          onClick={() => setActiveTab('products')}
+          className={`rounded-full px-4 py-1.5 font-semibold transition ${
+            activeTab === 'products'
+              ? 'bg-white text-rose-700 shadow-sm'
+              : 'text-slate-600 hover:text-slate-800'
+          }`}
+        >
+          Products
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('team')}
+          className={`rounded-full px-4 py-1.5 font-semibold transition ${
+            activeTab === 'team'
+              ? 'bg-white text-rose-700 shadow-sm'
+              : 'text-slate-600 hover:text-slate-800'
+          }`}
+        >
+          Team
+        </button>
+      </div>
+
+      {showProductForm && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+          <section className="w-full max-w-lg space-y-4 rounded-2xl border border-rose-100 bg-white/95 p-4 text-sm text-slate-700 shadow-lg">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-base font-semibold text-slate-900">
+                Add new product
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowProductForm(false)}
+                className="text-xs font-semibold text-slate-500 hover:text-slate-700"
+              >
+                Close
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-3 text-xs">
             <div className="space-y-1.5">
               <label htmlFor="name" className="font-medium text-slate-800">
                 Name
@@ -742,12 +795,35 @@ function Dashboard() {
               {savingProduct ? 'Saving product...' : 'Save product'}
             </button>
           </form>
-        </section>
+          </section>
+        </div>
+      )}
+
+      {activeTab === 'products' && (
+      <div className="mt-8 space-y-6">
 
         <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900">
-            Loaded products
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-slate-900">
+              Loaded products
+            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                type="text"
+                value={productSearch}
+                onChange={(event) => setProductSearch(event.target.value)}
+                placeholder="Search by name, SKU or category"
+                className="w-48 rounded-full border border-rose-100 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+              />
+              <button
+                type="button"
+                onClick={() => setShowProductForm(true)}
+                className="inline-flex items-center rounded-full bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-rose-700"
+              >
+                Add product
+              </button>
+            </div>
+          </div>
           {loading && (
             <p className="text-xs text-slate-600">Loading products...</p>
           )}
@@ -757,7 +833,7 @@ function Dashboard() {
             </p>
           )}
           <ul className="space-y-2 text-xs">
-            {products.map((product) => {
+            {filteredProducts.map((product) => {
               const isEditing = editingProductId === product.id
 
               return (
@@ -972,12 +1048,23 @@ function Dashboard() {
           </ul>
         </section>
       </div>
+      )}
 
-      <div className="mt-10 grid gap-8 md:grid-cols-[minmax(0,1.4fr),minmax(0,1.6fr)]">
-        <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900">
-            Add team member
-          </h2>
+      {showTeamForm && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 px-4">
+          <section className="w-full max-w-lg space-y-4 rounded-2xl border border-rose-100 bg-white/95 p-4 text-sm text-slate-700 shadow-lg">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-base font-semibold text-slate-900">
+                Add team member
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowTeamForm(false)}
+                className="text-xs font-semibold text-slate-500 hover:text-slate-700"
+              >
+                Close
+              </button>
+            </div>
           <form onSubmit={handleTeamSubmit} className="space-y-3 text-xs">
             <div className="space-y-1.5">
               <label htmlFor="team-name" className="font-medium text-slate-800">
@@ -1166,12 +1253,24 @@ function Dashboard() {
               Save member
             </button>
           </form>
-        </section>
+          </section>
+        </div>
+        )}
 
-        <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900">
-            Salon team
-          </h2>
+      {activeTab === 'team' && (
+        <section className="mt-10 space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-slate-900">
+              Salon team
+            </h2>
+            <button
+              type="button"
+              onClick={() => setShowTeamForm(true)}
+              className="inline-flex items-center rounded-full bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-rose-700"
+            >
+              Add team member
+            </button>
+          </div>
           {teamLoading && (
             <p className="text-xs text-slate-600">Loading team...</p>
           )}
@@ -1268,7 +1367,7 @@ function Dashboard() {
             })}
           </ul>
         </section>
-      </div>
+      )}
     </main>
   )
 }
