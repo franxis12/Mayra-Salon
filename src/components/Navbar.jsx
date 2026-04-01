@@ -12,7 +12,7 @@ const getNavLinkClass = ({ isActive }) =>
       ? "bg-rose-600 text-white shadow-sm"
       : "text-slate-700 hover:bg-rose-50 hover:text-rose-700",
   ].join(" ");
-
+//no test
 function Navbar() {
   const { user, isAdmin, signOut } = useAuth();
 
