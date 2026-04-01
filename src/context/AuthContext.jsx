@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signIn = async (email, password) => {
-    if (!supabase) return { error: new Error('Supabase no está configurado') }
+    if (!supabase) return { error: new Error('Supabase is not configured') }
     const result = await supabase.auth.signInWithPassword({ email, password })
     if (!result.error) {
       setUser(result.data.user)
@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
   }
 
   const signUp = async (email, password) => {
-    if (!supabase) return { error: new Error('Supabase no está configurado') }
+    if (!supabase) return { error: new Error('Supabase is not configured') }
     const result = await supabase.auth.signUp({ email, password })
     if (!result.error) {
       setUser(result.data.user)
@@ -75,8 +75,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider')
+    throw new Error('useAuth must be used within AuthProvider')
   }
   return context
 }
-

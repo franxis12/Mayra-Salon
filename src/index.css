@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  /* Colores principales (puedes cambiarlos luego en un solo lugar) */
-  --color-primary: #d50000; /* rosa fuerte */
+  /* Main colors (you can change them later in a single place) */
+  --color-primary: #d50000; /* strong pink */
   --color-primary-soft: #fec7d7;
   --color-primary-soft-alt: #ffe4ed;
-  --color-accent: #fb923c; /* naranja suave para detalles */
+  --color-accent: #fb923c; /* soft orange for details */
   --color-accent-soft: #ffedd5;
 
-  /* Fondo general y secciones */
+  /* Page background and sections */
   --color-page-bg: #fff7fa;
   --color-section-bg: #ffffff;
   --color-card-bg: #ffffff;
@@ -20,22 +20,22 @@
     #ffedd5
   );
 
-  /* Texto */
+  /* Text */
   --color-text-main: #020617;
   --color-text-soft: #475569;
   --color-text-muted: #64748b;
 
-  /* Bordes y sombras suaves (para tarjetas, inputs, etc.) */
+  /* Soft borders and shadows (for cards, inputs, etc.) */
   --color-border-soft: rgba(248, 113, 113, 0.2);
   --shadow-soft: 0 18px 45px rgba(148, 27, 87, 0.12);
 
-  /* Radios y espaciados “redondeados” del salón */
+  /* Rounded radiuses and spacings used in the salon UI */
   --radius-full: 999px;
   --radius-xl: 1.5rem;
   --radius-2xl: 2rem;
   --radius-3xl: 2.5rem;
 
-  /* Tipografía base (puedes cambiar por una fuente de marca) */
+  /* Base typography (you can swap for a brand font) */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 }
@@ -48,15 +48,15 @@ body {
   background: var(--color-page-bg);
 }
 
-/* Contenedor principal de la app (por si quieres usarlo en lugar del gradiente de Tailwind) */
+/* Main app container (use it instead of Tailwind gradients if you want) */
 .app-shell {
   background: var(--color-hero-gradient);
 }
 
-/* Ejemplos de utilidades basadas en variables para usar en JSX:
+/* Examples of variable-based utilities to use in JSX:
    className="btn-primary"
    className="card-soft"
-   Puedes ajustarlas o borrarlas según tu diseño. */
+   You can tweak or remove them depending on your design. */
 .btn-primary {
   border-radius: var(--radius-full);
   background-color: var(--color-primary);
@@ -93,8 +93,20 @@ body {
   font-weight: 500;
 }
 
-/* Mapeo de las clases Tailwind más usadas al sistema de variables.
-   Así, al cambiar las variables en :root se actualiza el tema completo. */
+/* Utilidad para tarjetas en formato portrait (3:4) */
+.portrait-card {
+  aspect-ratio: 3 / 4;
+}
+
+@media (max-width: 640px) {
+  /* On mobile, slightly shorter so they don&apos;t take too much height */
+  .portrait-card {
+    aspect-ratio: 2 / 3;
+  }
+}
+
+/* Mapping of commonly used Tailwind classes to the variable system.
+   Changing variables in :root updates the whole theme. */
 
 /* Fondo y texto principal */
 .text-slate-900 {

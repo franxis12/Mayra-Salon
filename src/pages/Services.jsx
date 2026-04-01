@@ -1,27 +1,27 @@
 const services = [
   {
-    title: 'Cabello',
+    title: 'Hair',
     description:
-      'Cortes, peinados y tratamientos diseñados para resaltar tu estilo y la salud de tu cabello.',
-    items: ['Corte dama', 'Brushing y peinado', 'Keratina y botox capilar', 'Tratamientos hidratantes'],
+      'Cuts, blowouts and treatments designed to highlight your style and keep your hair healthy.',
+    items: ['Women haircut', 'Blowout & styling', 'Keratin / botox treatment', 'Deep moisturizing treatments'],
   },
   {
-    title: 'Color & Mechas',
+    title: 'Color & Highlights',
     description:
-      'Coloraciones personalizadas, mechas, baby lights y correcciones de color con productos profesionales.',
-    items: ['Color completo', 'Mechas y reflejos', 'Balayage / babylights', 'Baño de color y brillo'],
+      'Custom color, highlights, baby lights and color corrections with professional products.',
+    items: ['Full color', 'Highlights & lowlights', 'Balayage / babylights', 'Gloss / shine treatment'],
   },
   {
-    title: 'Manos & Pies',
+    title: 'Hands & Feet',
     description:
-      'Relaja tus manos y pies con un servicio prolijo y detallista en nuestro espacio de spa.',
-    items: ['Manicure clásica', 'Pedicure spa', 'Esmaltado semipermanente', 'Spa de manos y pies'],
+      'Relax your hands and feet with detailed services in our spa area.',
+    items: ['Classic manicure', 'Spa pedicure', 'Gel / long-lasting polish', 'Hands & feet spa'],
   },
   {
-    title: 'Maquillaje',
+    title: 'Makeup',
     description:
-      'Maquillaje social y para eventos especiales que acompaña tu estilo y tu ocasión.',
-    items: ['Maquillaje social', 'Novias y quince', 'Pestañas individuales', 'Asesoría de imagen'],
+      'Social and event makeup that fits your style and occasion.',
+    items: ['Event makeup', 'Bridal & quinceanera', 'Individual lashes', 'Image / style consultation'],
   },
 ]
 
@@ -30,14 +30,14 @@ function Services() {
     <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
       <div className="space-y-4 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-          servicios
+          services
         </p>
         <h2 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-          Un salón completo para mimarte de pies a cabeza.
+          A full-service salon to pamper you from head to toe.
         </h2>
         <p className="mx-auto max-w-2xl text-sm text-slate-600 md:text-base">
-          Diseñamos cada servicio para que vivas un momento de relajación,
-          confianza y resultados profesionales.
+          Every service is designed so you can experience relaxation, confidence
+          and professional results.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ function Services() {
                 {service.title}
               </h3>
               <span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-600">
-                Agenda disponible
+                Availability
               </span>
             </div>
             <p className="text-sm text-slate-600">{service.description}</p>
@@ -72,4 +72,3 @@ function Services() {
 }
 
 export default Services
-

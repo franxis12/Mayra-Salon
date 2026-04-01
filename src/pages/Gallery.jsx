@@ -1,26 +1,26 @@
 const galleryItems = [
   {
-    label: 'Peinados y recogidos',
+    label: 'Hairstyles & updos',
     color: 'from-rose-300 via-rose-200 to-rose-100',
   },
   {
-    label: 'Coloraciones y mechas',
+    label: 'Color and highlights',
     color: 'from-amber-300 via-amber-200 to-rose-100',
   },
   {
-    label: 'Manos y uñas',
+    label: 'Hands & nails',
     color: 'from-pink-300 via-rose-200 to-rose-100',
   },
   {
-    label: 'Novias y eventos',
+    label: 'Brides & events',
     color: 'from-rose-400 via-rose-200 to-slate-100',
   },
   {
-    label: 'Antes y después',
+    label: 'Before & after',
     color: 'from-rose-300 via-amber-200 to-slate-100',
   },
   {
-    label: 'Detalles del salón',
+    label: 'Salon details',
     color: 'from-rose-200 via-slate-100 to-white',
   },
 ]
@@ -30,14 +30,14 @@ function Gallery() {
     <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
       <div className="space-y-4 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-          galería
+          gallery
         </p>
         <h2 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-          Inspiración y resultados reales.
+          Inspiration and real results.
         </h2>
         <p className="mx-auto max-w-2xl text-sm text-slate-600 md:text-base">
-          Un vistazo a algunos de nuestros trabajos, transformaciones y detalles
-          del salón. Deja que las ideas fluyan para tu próxima visita.
+          A look at some of our work, transformations and details of the salon.
+          Let ideas flow for your next visit.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ function Gallery() {
             />
             <div className="absolute inset-x-3 bottom-3 rounded-2xl bg-white/90 px-3 py-2 text-xs text-slate-700 shadow-sm">
               <p className="font-semibold text-slate-900">{item.label}</p>
-              <p>Imágenes referenciales. Personalizamos cada look para ti.</p>
+              <p>Sample images. We personalize each look just for you.</p>
             </div>
           </article>
         ))}
@@ -62,4 +62,3 @@ function Gallery() {
 }
 
 export default Gallery
-

@@ -15,7 +15,7 @@ function Store() {
     const loadProducts = async () => {
       if (!supabase) {
         setError(
-          'Supabase no está configurado. Agrega tus credenciales para cargar productos.',
+          'Supabase is not configured. Add your credentials to load products.',
         )
         setLoading(false)
         return
@@ -28,7 +28,9 @@ function Store() {
         .order('created_at', { ascending: false })
 
       if (dbError) {
-        setError(dbError.message ?? 'No se pudieron cargar los productos.')
+        setError(
+          dbError.message ?? 'We could not load products.',
+        )
       } else {
         setProducts(data ?? [])
       }
@@ -71,20 +73,21 @@ function Store() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-            tienda
+            store
           </p>
           <h2 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Productos para continuar el cuidado en casa.
+            Products to keep your routine at home.
           </h2>
           <p className="mt-2 max-w-xl text-sm text-slate-600 md:text-base">
-            Champús, tratamientos, aceites y más, seleccionados por nuestro
-            equipo para acompañar tus servicios de salón.
+            Shampoos, treatments, oils and more, selected by our team to match
+            your salon services.
           </p>
         </div>
         <div className="text-xs text-slate-600">
           {user ? (
             <p>
-              Conectada como <span className="font-semibold">{user.email}</span>
+              Signed in as{' '}
+              <span className="font-semibold">{user.email}</span>
             </p>
           ) : (
             <p>
@@ -92,9 +95,9 @@ function Store() {
                 to="/login"
                 className="font-semibold text-rose-700 underline-offset-4 hover:underline"
               >
-                Inicia sesión
+                Sign in
               </Link>{' '}
-              para guardar tu historial de compras.
+              to save your order history.
             </p>
           )}
         </div>
@@ -102,7 +105,7 @@ function Store() {
 
       <div className="grid gap-8 md:grid-cols-[minmax(0,2fr),minmax(260px,1fr)]">
         <section className="space-y-4">
-          {loading && <p className="text-sm text-slate-600">Cargando productos...</p>}
+          {loading && <p className="text-sm text-slate-600">Loading products...</p>}
           {error && (
             <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">
               {error}
@@ -111,7 +114,7 @@ function Store() {
 
           {!loading && !error && products.length === 0 && (
             <p className="text-sm text-slate-600">
-              Aún no hay productos cargados en la tienda.
+              There are no products in the store yet.
             </p>
           )}
 
@@ -147,14 +150,14 @@ function Store() {
                   <p className="font-semibold text-rose-700">
                     {product.price != null
                       ? `$${(product.price / 100).toFixed(2)}`
-                      : 'Consultar'}
+                      : 'Ask us'}
                   </p>
                   <button
                     type="button"
                     onClick={() => addToCart(product)}
                     className="rounded-full bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-700"
                   >
-                    Agregar
+                    Add to cart
                   </button>
                 </div>
               </article>
@@ -164,11 +167,11 @@ function Store() {
 
         <aside className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
           <h3 className="text-base font-semibold text-slate-900">
-            Tu carrito
+            Your cart
           </h3>
           {cart.length === 0 ? (
             <p className="text-xs text-slate-600">
-              Aún no agregaste productos. Elige uno de la lista.
+              You haven&apos;t added products yet. Choose one from the list.
             </p>
           ) : (
             <ul className="space-y-2 text-xs">
@@ -185,7 +188,7 @@ function Store() {
                       </span>
                     </p>
                     <p className="text-[11px] text-slate-500">
-                      ${(item.price / 100).toFixed(2)} c/u
+                      ${(item.price / 100).toFixed(2)} each
                     </p>
                   </div>
                   <button
@@ -193,7 +196,7 @@ function Store() {
                     onClick={() => removeFromCart(item.id)}
                     className="text-[11px] font-semibold text-rose-600 underline-offset-4 hover:underline"
                   >
-                    Quitar
+                    Remove
                   </button>
                 </li>
               ))}
@@ -207,7 +210,7 @@ function Store() {
               </span>
             </div>
             <p className="mt-1 text-[11px] text-slate-500">
-              Los pagos se procesan de forma segura con Square.
+              Payments are processed securely with Square.
             </p>
           </div>
           <button
@@ -216,7 +219,7 @@ function Store() {
             onClick={goToCheckout}
             className="inline-flex w-full items-center justify-center rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:opacity-60"
           >
-            Continuar al pago
+            Continue to checkout
           </button>
         </aside>
       </div>

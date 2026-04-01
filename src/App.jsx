@@ -10,6 +10,7 @@ import Store from './pages/Store.jsx'
 import Checkout from './pages/Checkout.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import Profile from './pages/Profile.jsx'
 
 function App() {
   return (
@@ -17,14 +18,15 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/servicios" element={<Services />} />
-        <Route path="/galeria" element={<Gallery />} />
-        <Route path="/nosotras" element={<About />} />
-        <Route path="/contacto" element={<Contact />} />
-        <Route path="/tienda" element={<Store />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/store" element={<Store />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />

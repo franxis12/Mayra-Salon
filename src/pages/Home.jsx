@@ -3,13 +3,20 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient.js";
 
 const CATEGORIES = [
-  { id: "all", label: "Todos" },
-  { id: "Cabello", label: "Cabello" },
-  { id: "Color & mechas", label: "Color & mechas" },
-  { id: "Manos & pies", label: "Manos & pies" },
-  { id: "Maquillaje", label: "Maquillaje" },
-  { id: "Tratamientos", label: "Tratamientos" },
+  { id: "all", label: "All" },
+  { id: "Hair", label: "Hair" },
+  { id: "Color & highlights", label: "Color & highlights" },
+  { id: "Hands & feet", label: "Hands & feet" },
+  { id: "Makeup", label: "Makeup" },
+  { id: "Treatments", label: "Treatments" },
 ];
+
+const GALLERY_IMAGES = Object.values(
+  import.meta.glob("../assets/Images/gallery/*.{png,jpg,jpeg,webp}", {
+    eager: true,
+    as: "url",
+  }),
+);
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -25,7 +32,7 @@ function Home() {
     const loadProducts = async () => {
       if (!supabase) {
         setProductsError(
-          "Conecta Supabase para mostrar productos en la portada.",
+          "Connect Supabase to show products on the homepage.",
         );
         setLoadingProducts(false);
         return;
@@ -39,7 +46,7 @@ function Home() {
       if (error) {
         setProductsError(
           error.message ??
-            "No pudimos cargar productos destacados. Intenta más tarde.",
+            "We couldn't load featured products. Please try again later.",
         );
       } else {
         setProducts(data ?? []);
@@ -53,7 +60,7 @@ function Home() {
   useEffect(() => {
     const loadTeam = async () => {
       if (!supabase) {
-        setTeamError("Conecta Supabase para mostrar el equipo en la portada.");
+        setTeamError("Connect Supabase to show the team on the homepage.");
         setTeamLoading(false);
         return;
       }
@@ -67,7 +74,8 @@ function Home() {
 
       if (error) {
         setTeamError(
-          error.message ?? "No pudimos cargar el equipo. Intenta más tarde.",
+          error.message ??
+            "We couldn't load the team. Please try again later.",
         );
       } else {
         setTeam(data ?? []);
@@ -97,46 +105,43 @@ function Home() {
     <main className="mx-auto max-w-6xl px-4 py-10 md:py-16">
       <div className="relative grid gap-10 md:grid-cols-[1.1fr,1.1fr] md:items-center">
         <div className="space-y-6">
-          <p className="inline-flex items-center rounded-full bg-rose-50 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-rose-600">
-            Mayra Salon
-          </p>
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
-            Tu momento de cuidado,
-            <span className="text-rose-600"> justo como lo mereces.</span>
+            Your moment of self-care,
+            <span className="text-rose-600"> exactly as you deserve it.</span>
           </h1>
 
           <p className="max-w-xl text-sm leading-relaxed text-slate-600 md:text-base">
-            En Mayra Salon combinamos técnicas profesionales con un ambiente
-            cálido para que cada visita sea una experiencia de relajación,
-            estilo y confianza. Cabello, manos y piel en manos expertas.
+            At D&apos;Mayra Salon we combine professional techniques with a warm
+            atmosphere so that every visit feels like relaxation, style and
+            confidence. Hair, hands and skin in expert hands.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
-              to="/contacto"
+              to="/contact"
               className="inline-flex items-center rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700"
             >
-              Reservar cita
+              Book appointment
             </Link>
             <Link
-              to="/servicios"
+              to="/services"
               className="inline-flex items-center rounded-full border border-rose-200 bg-white px-6 py-2.5 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-50"
             >
-              Ver servicios
+              View services
             </Link>
           </div>
 
           <dl className="mt-4 grid max-w-md grid-cols-3 gap-4 text-xs text-slate-600 md:text-sm">
             <div>
-              <dt className="font-semibold text-slate-900">+10 años</dt>
-              <dd>de experiencia en belleza y cuidado.</dd>
+              <dt className="font-semibold text-slate-900">10+ years</dt>
+              <dd>of beauty and care experience.</dd>
             </div>
             <div>
-              <dt className="font-semibold text-slate-900">Productos pro</dt>
-              <dd>marcas profesionales y tratamientos personalizados.</dd>
+              <dt className="font-semibold text-slate-900">Pro products</dt>
+              <dd>professional brands and tailored treatments.</dd>
             </div>
             <div>
-              <dt className="font-semibold text-slate-900">Ambiente único</dt>
-              <dd>relajante, femenino y acogedor.</dd>
+              <dt className="font-semibold text-slate-900">Unique vibe</dt>
+              <dd>relaxing, feminine and welcoming.</dd>
             </div>
           </dl>
         </div>
@@ -146,22 +151,21 @@ function Home() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-              tienda mayra
+              d&apos;mayra store
             </p>
             <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-              Productos que complementan tu rutina en casa.
+              Products that complete your at-home routine.
             </h2>
             <p className="mt-1 max-w-xl text-xs text-slate-600 md:text-sm">
-              Descubre algunos de los productos que recomendamos a nuestras
-              clientas. Se muestran hasta 5 de forma aleatoria según la
-              categoría.
+              Discover some of the products we recommend to our clients. Up to
+              5 are displayed randomly depending on the category.
             </p>
           </div>
           <Link
-            to="/tienda"
+            to="/store"
             className="inline-flex items-center rounded-full border border-rose-200 bg-white px-4 py-2 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50 md:text-sm"
           >
-            Ver tienda completa
+            View full store
           </Link>
         </div>
 
@@ -188,10 +192,10 @@ function Home() {
           })}
         </div>
 
-        <div className="mt-6">
-          {loadingProducts && (
-            <p className="text-xs text-slate-600">Cargando productos...</p>
-          )}
+          <div className="mt-6">
+            {loadingProducts && (
+              <p className="text-xs text-slate-600">Loading products...</p>
+            )}
           {productsError && !loadingProducts && (
             <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">
               {productsError}
@@ -199,7 +203,7 @@ function Home() {
           )}
           {!loadingProducts && !productsError && featured.length === 0 && (
             <p className="text-xs text-slate-600">
-              Aún no hay productos para mostrar en esta categoría.
+              There are no products to show for this category yet.
             </p>
           )}
 
@@ -248,28 +252,27 @@ function Home() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-              nuestro equipo
+              our team
             </p>
             <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-              Las personas detrás de tu nueva versión.
+              The people behind your new look.
             </h2>
             <p className="mt-1 max-w-xl text-xs text-slate-600 md:text-sm">
-              Conoce a algunas de las especialistas de Mayra Salon y sus
-              horarios habituales. Puedes ver el equipo completo en la sección
-              “Nosotras”.
+              Get to know some of D&apos;Mayra&apos;s specialists and their
+              usual schedules. You can see the full team in the About section.
             </p>
           </div>
           <Link
-            to="/nosotras"
+            to="/about"
             className="inline-flex items-center rounded-full border border-rose-200 bg-white px-4 py-2 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50 md:text-sm"
           >
-            Ver equipo completo
+            View full team
           </Link>
         </div>
 
-        <div className="mt-4">
-          {teamLoading && (
-            <p className="text-xs text-slate-600">Cargando equipo...</p>
+          <div className="mt-4">
+            {teamLoading && (
+              <p className="text-xs text-slate-600">Loading team...</p>
           )}
           {teamError && !teamLoading && (
             <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">
@@ -278,8 +281,8 @@ function Home() {
           )}
           {!teamLoading && !teamError && team.length === 0 && (
             <p className="text-xs text-slate-600">
-              Aún no cargaste miembros del equipo. Puedes hacerlo desde el panel
-              de administración.
+              You haven&apos;t added team members yet. You can do it from the
+              admin panel.
             </p>
           )}
 
@@ -344,16 +347,16 @@ function Home() {
                       {years && (
                         <p>
                           <span className="font-semibold text-slate-800">
-                            Experiencia:
+                            Experience:
                           </span>{" "}
-                          {years} años
+                          {years} years
                         </p>
                       )}
                       {schedulePreview && (
                         <div>
                           <p>
                             <span className="font-semibold text-slate-800">
-                              Horarios:
+                            Hours:
                             </span>
                           </p>
                           <ul className="mt-1 space-y-0.5">
@@ -368,7 +371,7 @@ function Home() {
                       {member.phone && (
                         <p>
                           <span className="font-semibold text-slate-800">
-                            Teléfono:
+                            Phone:
                           </span>{" "}
                           {member.phone}
                         </p>
@@ -382,42 +385,86 @@ function Home() {
         </div>
       </section>
 
+      {GALLERY_IMAGES.length > 0 && (
+        <section className="mt-14 rounded-3xl border border-rose-100 bg-white/80 p-5 text-sm text-slate-700 shadow-sm shadow-rose-100 md:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
+              recent work
+            </p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
+              A quick peek at our work.
+            </h2>
+            <p className="mt-1 max-w-xl text-xs text-slate-600 md:text-sm">
+              Hairstyles, color and manicures from real clients at
+              D&apos;Mayra. This is just a small sample; you can see more
+              details in the gallery.
+              </p>
+            </div>
+            <Link
+              to="/gallery"
+              className="inline-flex items-center rounded-full border border-rose-200 bg-white px-4 py-2 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50 md:text-sm"
+            >
+              View full gallery
+            </Link>
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2 md:grid-cols-4">
+            {GALLERY_IMAGES.slice(0, 8).map((src, index) => (
+              <figure
+                key={src}
+                className="group relative overflow-hidden rounded-2xl border border-rose-100 bg-rose-50/60 shadow-sm"
+              >
+                <div className="w-full overflow-hidden portrait-card">
+                  <img
+                    src={src}
+                    alt={`Work done at D'Mayra Salon ${index + 1}`}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="mt-14 grid gap-6 rounded-3xl border border-rose-100 bg-white/80 p-5 text-sm text-slate-700 shadow-sm shadow-rose-100 md:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] md:p-6">
         <div className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-            ubicación
+            location
           </p>
           <h2 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-            Te esperamos en 1022 Broad St
+            Visit us at 1022 Broad St
           </h2>
           <p className="text-xs text-slate-600 md:text-sm">
-            Estamos en una zona céntrica y de fácil acceso para que llegar al
-            salón sea tan simple como tomarte un momento para ti.
+            We are in a central and easy-to-access area so getting to the salon
+            is as simple as taking a moment for yourself.
           </p>
           <ul className="space-y-1 text-xs text-slate-600">
             <li>
-              <span className="font-semibold text-slate-800">Dirección:</span>{" "}
+              <span className="font-semibold text-slate-800">Address:</span>{' '}
               1022 Broad St, Providence,<br></br> RI 02905 United States
             </li>
 
             <li>
-              <span className="font-semibold text-slate-800">Horario:</span>{" "}
-              lunes a sábado · 9:00 a 19:00
+              <span className="font-semibold text-slate-800">Hours:</span>{" "}
+              Monday to Saturday · 9:00am to 7:00pm
             </li>
           </ul>
           <div className="flex flex-wrap gap-2 pt-1">
             <Link
-              to="/contacto"
+              to="/contact"
               className="inline-flex items-center rounded-full border border-rose-200 bg-white px-4 py-2 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50 md:text-sm"
             >
-              Ver más detalles de contacto
+              View more contact details
             </Link>
           </div>
         </div>
         <div className="flex h-52 items-center justify-center rounded-2xl border border-dashed border-rose-200 bg-rose-50/60 p-0 text-center text-xs text-slate-600 md:h-64">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d246.15168371607126!2d-71.41324405005608!3d41.797210589722454!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e44f13d0930519%3A0x60b1bd4233e60c40!2sD&#39;%20Mayra%20Beauty%20Supply!5e0!3m2!1ses-419!2sus!4v1774902449780!5m2!1ses-419!2sus"
-            title="Ubicación Mayra Salon"
+            title="D'Mayra Salon location"
             className="h-full w-full rounded-2xl"
             style={{ border: 0 }}
             loading="lazy"

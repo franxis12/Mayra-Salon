@@ -10,7 +10,7 @@ function About() {
     const loadTeam = async () => {
       if (!supabase) {
         setError(
-          'Conecta Supabase para mostrar el equipo de forma dinámica.',
+          'Connect Supabase to show the team dynamically.',
         )
         setLoading(false)
         return
@@ -23,7 +23,7 @@ function About() {
         .order('created_at', { ascending: true })
 
       if (dbError) {
-        setError(dbError.message ?? 'No se pudo cargar el equipo.')
+        setError(dbError.message ?? 'We could not load the team.')
       } else {
         setTeam(data ?? [])
       }
@@ -38,41 +38,40 @@ function About() {
       <div className="grid gap-10 md:grid-cols-[1.2fr,1fr] md:items-start">
         <section className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-            nosotras
+            about us
           </p>
           <h2 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            Un equipo que ama cuidar de ti.
+            A team that loves taking care of you.
           </h2>
           <p className="text-sm text-slate-600 md:text-base">
-            Mayra Salon nació del deseo de crear un espacio femenino, cálido y
-            profesional donde cada clienta se sienta escuchada y acompañada. Nos
-            enfocamos en escucharte y aconsejarte para encontrar el estilo que
-            mejor resalta tu esencia.
+            D&apos;Mayra Salon was born from the desire to create a feminine,
+            warm and professional space where every client feels heard and
+            supported. We focus on listening to you and advising you to find the
+            style that best highlights your essence.
           </p>
           <p className="text-sm text-slate-600 md:text-base">
-            Trabajamos con productos seleccionados y nos capacitamos
-            constantemente para ofrecerte las últimas tendencias en coloración,
-            cortes y cuidado integral.
+            We work with selected products and constantly train to offer you the
+            latest trends in color, cuts and overall care.
           </p>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-rose-100 bg-white/80 p-4 text-xs text-slate-700 shadow-sm">
               <p className="text-sm font-semibold text-slate-900">Mayra</p>
               <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-rose-600">
-                estilista &amp; colorista
+                stylist &amp; colorist
               </p>
               <p>
-                Especialista en coloración, mechas y cambios de imagen. Su
-                objetivo es que te vayas del salón sintiéndote renovada.
+                Specialist in color, highlights and image changes. Her goal is
+                that you leave the salon feeling renewed.
               </p>
             </div>
             <div className="rounded-2xl border border-rose-100 bg-white/80 p-4 text-xs text-slate-700 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">Equipo Mayra</p>
+              <p className="text-sm font-semibold text-slate-900">Mayra team</p>
               <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-rose-600">
-                manicuristas &amp; maquillaje
+                manicure &amp; makeup
               </p>
               <p>
-                Un equipo atento a cada detalle, desde tus manos y pies hasta el
-                look perfecto para tu evento especial.
+                A team attentive to every detail, from your hands and feet to
+                the perfect look for your special event.
               </p>
             </div>
           </div>
@@ -80,17 +79,17 @@ function About() {
 
         <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-5 text-sm text-slate-700 shadow-sm">
           <h3 className="text-base font-semibold text-slate-900">
-            Nuestro espacio
+            Our space
           </h3>
           <p>
-            Luz cálida, aromas suaves, música relajante y una atención cercana.
-            Buscamos que tu cita sea un momento de pausa en tu rutina.
+            Warm light, soft aromas, relaxing music and close attention. We want
+            your appointment to be a pause in your routine.
           </p>
           <ul className="space-y-2 text-xs">
-            <li>• Ubicación céntrica con fácil acceso.</li>
-            <li>• Ambiente íntimo y acogedor, pensado para pocas clientas a la vez.</li>
-            <li>• Área de manicure y pedicure tipo spa.</li>
-            <li>• Estaciones de peinado cómodas y luminosas.</li>
+            <li>• Central location with easy access.</li>
+            <li>• Intimate, cozy atmosphere designed for a few clients at a time.</li>
+            <li>• Spa-like manicure and pedicure area.</li>
+            <li>• Comfortable, bright styling stations.</li>
           </ul>
         </section>
       </div>
@@ -98,20 +97,20 @@ function About() {
       <section className="mt-10 space-y-4">
         <div className="space-y-2 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
-            equipo
+            team
           </p>
           <h3 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-            Conoce a quienes cuidan de ti.
+            Meet the people who take care of you.
           </h3>
           <p className="mx-auto max-w-2xl text-sm text-slate-600 md:text-base">
-            Cada miembro del equipo tiene su estilo y especialidad. Aquí puedes
-            ver sus horarios, experiencia y una forma de contactarlos.
+            Each team member has their own style and specialty. Here you can see
+            their schedules, experience and how to contact them.
           </p>
         </div>
 
         {loading && (
           <p className="text-center text-xs text-slate-600">
-            Cargando equipo...
+            Loading team...
           </p>
         )}
         {error && !loading && (
@@ -121,8 +120,8 @@ function About() {
         )}
         {!loading && !error && team.length === 0 && (
           <p className="text-center text-xs text-slate-600">
-            Aún no hay miembros cargados. Puedes añadirlos desde el panel de
-            administración.
+            There are no team members yet. You can add them from the admin
+            panel.
           </p>
         )}
 
@@ -183,16 +182,16 @@ function About() {
                     {years && (
                       <p>
                         <span className="font-semibold text-slate-800">
-                          Experiencia:
+                          Experience:
                         </span>{' '}
-                        {years} años
+                        {years} years
                       </p>
                     )}
                     {parsedSchedule ? (
                       <div>
                         <p>
                           <span className="font-semibold text-slate-800">
-                            Horarios:
+                            Hours:
                           </span>
                         </p>
                         <ul className="mt-1 space-y-0.5">
@@ -209,7 +208,7 @@ function About() {
                     ) : member.schedule ? (
                       <p>
                         <span className="font-semibold text-slate-800">
-                          Horarios:
+                          Hours:
                         </span>{' '}
                         {member.schedule}
                       </p>
@@ -217,7 +216,7 @@ function About() {
                     {member.phone && (
                       <p>
                         <span className="font-semibold text-slate-800">
-                          Teléfono:
+                          Phone:
                         </span>{' '}
                         {member.phone}
                       </p>

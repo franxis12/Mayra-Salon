@@ -21,7 +21,7 @@ function Checkout() {
     setError('')
 
     if (cart.length === 0) {
-      navigate('/tienda')
+      navigate('/store')
       return
     }
 
@@ -30,7 +30,7 @@ function Checkout() {
     if (!supabase) {
       setLoading(false)
       setError(
-        'Supabase no está configurado. Agrega tus credenciales para guardar órdenes.',
+        'Supabase is not configured. Add your credentials to save orders.',
       )
       return
     }
@@ -44,7 +44,9 @@ function Checkout() {
 
     if (orderError) {
       setLoading(false)
-      setError(orderError.message ?? 'No se pudo crear la orden.')
+      setError(
+        orderError.message ?? 'We could not create the order.',
+      )
       return
     }
 
@@ -76,7 +78,7 @@ function Checkout() {
       })
 
       if (!response.ok) {
-        throw new Error('No se pudo iniciar el pago con Square.')
+        throw new Error('Could not start payment with Square.')
       }
 
       const data = await response.json()
@@ -84,10 +86,12 @@ function Checkout() {
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl
       } else {
-        throw new Error('Respuesta inválida del backend de Square.')
+        throw new Error('Invalid response from the Square backend.')
       }
     } catch (fetchError) {
-      setError(fetchError.message ?? 'No se pudo iniciar el pago con Square.')
+      setError(
+        fetchError.message ?? 'Could not start payment with Square.',
+      )
       setLoading(false)
     }
   }
@@ -96,12 +100,12 @@ function Checkout() {
     return (
       <main className="mx-auto max-w-4xl px-4 py-10 md:py-14">
         <p className="text-sm text-slate-700">
-          Tu carrito está vacío. Vuelve a la{' '}
+          Your cart is empty. Go back to the{' '}
           <Link
-            to="/tienda"
+            to="/store"
             className="font-semibold text-rose-700 underline-offset-4 hover:underline"
           >
-            tienda
+            store
           </Link>
           .
         </p>
@@ -112,10 +116,10 @@ function Checkout() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 md:py-14">
       <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-        Revisar y confirmar tu pedido.
+        Review and confirm your order.
       </h1>
       <p className="mt-2 text-sm text-slate-600 md:text-base">
-        Revisa los productos y completa el pago seguro con Square.
+        Review the products and complete payment securely with Square.
       </p>
 
       <form
@@ -124,30 +128,30 @@ function Checkout() {
       >
         <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
           <h2 className="text-base font-semibold text-slate-900">
-            Datos de contacto
+            Contact details
           </h2>
           {!user && (
             <p className="text-xs text-slate-600">
-              Puedes comprar como invitada, pero al iniciar sesión podrás
-              acceder a tu historial de pedidos.
+              You can buy as a guest, but if you sign in you&apos;ll be able to
+              see your order history.
             </p>
           )}
-          <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5 text-xs">
-              <label htmlFor="name" className="font-medium text-slate-800">
-                Nombre completo
+                <label htmlFor="name" className="font-medium text-slate-800">
+                  Full name
               </label>
               <input
                 id="name"
                 type="text"
                 required
                 className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
-                placeholder="Ej: Mayra González"
+                placeholder="Ex: Mayra Gonzalez"
               />
             </div>
             <div className="space-y-1.5 text-xs">
-              <label htmlFor="email" className="font-medium text-slate-800">
-                Correo electrónico
+                <label htmlFor="email" className="font-medium text-slate-800">
+                  Email
               </label>
               <input
                 id="email"
@@ -155,19 +159,19 @@ function Checkout() {
                 required
                 defaultValue={user?.email ?? ''}
                 className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
-                placeholder="ejemplo@correo.com"
+                placeholder="example@email.com"
               />
             </div>
           </div>
           <div className="space-y-1.5 text-xs">
             <label htmlFor="notes" className="font-medium text-slate-800">
-              Comentarios para el pedido
+              Order notes
             </label>
             <textarea
               id="notes"
               rows={3}
               className="w-full resize-none rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
-              placeholder="Ej: Prefiero retirar en el salón o cualquier indicación especial."
+              placeholder="Ex: I prefer pick-up at the salon or any special indication."
             />
           </div>
 
@@ -180,7 +184,7 @@ function Checkout() {
 
         <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
           <h2 className="text-base font-semibold text-slate-900">
-            Resumen del pedido
+            Order summary
           </h2>
           <ul className="space-y-2 text-xs">
             {cart.map((item) => (
@@ -196,7 +200,7 @@ function Checkout() {
                     </span>
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    ${(item.price / 100).toFixed(2)} c/u
+                    ${(item.price / 100).toFixed(2)} each
                   </p>
                 </div>
                 <p className="text-[11px] font-semibold text-slate-800">
@@ -207,13 +211,13 @@ function Checkout() {
           </ul>
           <div className="border-t border-rose-100 pt-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-slate-800">Total a pagar</span>
+              <span className="font-semibold text-slate-800">Total to pay</span>
               <span className="text-sm font-semibold text-rose-700">
                 ${total.toFixed(2)}
               </span>
             </div>
             <p className="mt-1 text-[11px] text-slate-500">
-              El cobro se procesa con Square mediante un enlace de pago seguro.
+              The charge is processed with Square through a secure payment link.
             </p>
           </div>
           <button
@@ -221,7 +225,7 @@ function Checkout() {
             disabled={loading}
             className="inline-flex w-full items-center justify-center rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:opacity-70"
           >
-            {loading ? 'Redirigiendo a Square...' : 'Confirmar y pagar'}
+            {loading ? 'Redirecting to Square...' : 'Confirm and pay'}
           </button>
         </section>
       </form>
@@ -230,4 +234,3 @@ function Checkout() {
 }
 
 export default Checkout
-

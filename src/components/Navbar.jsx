@@ -33,22 +33,22 @@ function Navbar() {
 
         <div className="hidden gap-2 md:flex">
           <NavLink to="/" className={getNavLinkClass}>
-            Inicio
+            Home
           </NavLink>
-          <NavLink to="/servicios" className={getNavLinkClass}>
-            Servicios
+          <NavLink to="/services" className={getNavLinkClass}>
+            Services
           </NavLink>
-          <NavLink to="/tienda" className={getNavLinkClass}>
-            Tienda
+          <NavLink to="/store" className={getNavLinkClass}>
+            Store
           </NavLink>
-          <NavLink to="/galeria" className={getNavLinkClass}>
-            Galería
+          <NavLink to="/gallery" className={getNavLinkClass}>
+            Gallery
           </NavLink>
-          <NavLink to="/nosotras" className={getNavLinkClass}>
-            Nosotras
+          <NavLink to="/about" className={getNavLinkClass}>
+            About
           </NavLink>
-          <NavLink to="/contacto" className={getNavLinkClass}>
-            Contacto
+          <NavLink to="/contact" className={getNavLinkClass}>
+            Contact
           </NavLink>
         </div>
 
@@ -58,23 +58,29 @@ function Navbar() {
               to="/dashboard"
               className="hidden rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 md:inline-flex"
             >
-              Panel
+              Admin
             </NavLink>
           )}
           {user ? (
             <>
+              <NavLink
+                to="/profile"
+                className="hidden text-xs font-semibold text-slate-600 underline-offset-4 hover:underline md:inline-block"
+              >
+                My account
+              </NavLink>
               <button
                 type="button"
                 onClick={signOut}
                 className="hidden text-xs font-semibold text-slate-600 underline-offset-4 hover:underline md:inline-block"
               >
-                Cerrar sesión
+                Sign out
               </button>
               <NavLink
-                to="/contacto"
+                to="/contact"
                 className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
               >
-                Reserva tu cita
+                Book an appointment
               </NavLink>
             </>
           ) : (
@@ -83,13 +89,13 @@ function Navbar() {
                 to="/login"
                 className="hidden text-xs font-semibold text-slate-600 underline-offset-4 hover:underline md:inline-block"
               >
-                Iniciar sesión
+                Sign in
               </Link>
               <NavLink
-                to="/contacto"
+                to="/contact"
                 className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
               >
-                Reserva tu cita
+                Book an appointment
               </NavLink>
             </>
           )}
