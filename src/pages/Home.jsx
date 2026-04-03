@@ -35,6 +35,7 @@ function Home() {
   const [heroLoading, setHeroLoading] = useState(true);
   const [heroError, setHeroError] = useState("");
   const [heroIndex, setHeroIndex] = useState(0);
+  const [homeSearch, setHomeSearch] = useState("");
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -195,7 +196,36 @@ function Home() {
   );
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 md:py-16">
+    <main className="mx-auto max-w-6xl px-4 py-2 md:py-2">
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const term = homeSearch.trim();
+          if (!term) return;
+          navigate(`/store?q=${encodeURIComponent(term)}`);
+        }}
+        className="mb-6 flex justify-center"
+      >
+        <div className="relative w-full max-w-xl">
+          <input
+            type="text"
+            value={homeSearch}
+            onChange={(event) => setHomeSearch(event.target.value)}
+            placeholder="Search products (e.g. shampoo, conditioner, comb)"
+            className="w-full rounded-full border border-rose-100 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+          />
+          {homeSearch && (
+            <button
+              type="button"
+              onClick={() => setHomeSearch("")}
+              className="absolute inset-y-0 right-3 my-auto text-[11px] font-semibold text-slate-400 hover:text-slate-600"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </form>
+
       <div className="relative grid gap-10 md:grid-cols-[1.1fr,1.1fr] md:items-center">
         <div className="space-y-6">
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">
@@ -570,7 +600,9 @@ function Home() {
 
                       <div
                         className={`absolute inset-0 bg-white/95 text-slate-700 transition-opacity duration-300 ${
-                          isActive ? "opacity-100" : "opacity-0 pointer-events-none"
+                          isActive
+                            ? "opacity-100"
+                            : "opacity-0 pointer-events-none"
                         }`}
                       >
                         <div className="flex h-full flex-col justify-between p-4 text-[11px]">

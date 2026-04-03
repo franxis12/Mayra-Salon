@@ -38,8 +38,10 @@ function Login() {
       return
     }
 
-    const action = mode === 'login' ? signIn : signUp
-    const { data, error: authError } = await action(email, password)
+    const { data, error: authError } =
+      mode === 'login'
+        ? await signIn(email, password)
+        : await signUp(email, password, { full_name: fullName || null })
 
     if (authError) {
       setLoading(false)

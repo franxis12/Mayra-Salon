@@ -5,7 +5,29 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const fetchProfile = async (userId) => {
+    if (!supabase || !userId) {
+      setProfile(null)
+      return
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle()
+
+    if (error) {
+      // We don't block the UI if profile fails; just clear it.
+      setProfile(null)
+      return
+    }
+
+    setProfile(data ?? null)
+  }
 
   useEffect(() => {
     if (!supabase) {
@@ -15,7 +37,13 @@ export function AuthProvider({ children }) {
 
     const getInitialUser = async () => {
       const { data } = await supabase.auth.getUser()
-      setUser(data?.user ?? null)
+      const currentUser = data?.user ?? null
+      setUser(currentUser)
+      if (currentUser?.id) {
+        await fetchProfile(currentUser.id)
+      } else {
+        setProfile(null)
+      }
       setLoading(false)
     }
 
@@ -24,7 +52,13 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      const nextUser = session?.user ?? null
+      setUser(nextUser)
+      if (nextUser?.id) {
+        fetchProfile(nextUser.id)
+      } else {
+        setProfile(null)
+      }
       setLoading(false)
     })
 
@@ -37,16 +71,28 @@ export function AuthProvider({ children }) {
     if (!supabase) return { error: new Error('Supabase is not configured') }
     const result = await supabase.auth.signInWithPassword({ email, password })
     if (!result.error) {
-      setUser(result.data.user)
+      const signedUser = result.data.user
+      setUser(signedUser)
+      if (signedUser?.id) {
+        fetchProfile(signedUser.id)
+      }
     }
     return result
   }
 
-  const signUp = async (email, password) => {
+  const signUp = async (email, password, metadata = {}) => {
     if (!supabase) return { error: new Error('Supabase is not configured') }
-    const result = await supabase.auth.signUp({ email, password })
+    const result = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: metadata },
+    })
     if (!result.error) {
-      setUser(result.data.user)
+      const newUser = result.data.user
+      setUser(newUser)
+      if (newUser?.id) {
+        fetchProfile(newUser.id)
+      }
     }
     return result
   }
@@ -62,6 +108,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    profile,
     loading,
     isAdmin,
     signIn,

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useCart } from "../context/CartContext.jsx";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 const normalizeQuery = (raw) => {
   let q = raw.toLowerCase();
@@ -27,6 +27,23 @@ function Store() {
   const { user } = useAuth();
   const { items: cart, addItem, removeItem } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const fromQuery = params.get("q") ?? "";
+    const fromState =
+      typeof location.state === "object" && location.state?.search
+        ? String(location.state.search)
+        : "";
+    const initial = (fromQuery || fromState).trim();
+
+    if (initial) {
+      setSearchQuery(initial);
+      setSearchTerm(initial);
+      setPage(0);
+    }
+  }, [location.search, location.state]);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -141,7 +158,7 @@ function Store() {
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
+    <main className="mx-auto max-w-6xl px-4 py-2 md:py-2">
       <form onSubmit={handleSearchSubmit} className="mb-6 flex justify-center">
         <div className="relative w-full max-w-xl">
           <input
@@ -159,6 +176,7 @@ function Store() {
                 setSearchTerm("");
                 setPage(0);
                 setSuggestions([]);
+                navigate("/store", { replace: true });
               }}
               className="absolute inset-y-0 right-3 my-auto text-[11px] font-semibold text-slate-400 hover:text-slate-600"
             >
