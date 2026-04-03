@@ -3,6 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase } from '../lib/supabaseClient.js'
 
+const TERMS_VERSION = 'v1';
+
 function Login() {
   const { signIn, signUp } = useAuth()
   const [mode, setMode] = useState('login')
@@ -46,6 +48,8 @@ function Login() {
     }
 
     if (mode === 'register' && supabase && data?.user) {
+      const nowIso = new Date().toISOString()
+
       const profilePayload = {
         id: data.user.id,
         full_name: fullName || null,
@@ -57,6 +61,8 @@ function Login() {
         postal_code: postalCode || null,
         country: country || null,
         role: role || 'client',
+        accepted_terms_at: nowIso,
+        accepted_terms_version: TERMS_VERSION,
       }
 
       const { error: profileError } = await supabase

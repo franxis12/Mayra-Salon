@@ -14,6 +14,20 @@ function Footer() {
         </div>
         <nav className="flex flex-wrap items-center gap-3 text-[11px] md:justify-end">
           <Link
+            to="/about"
+            className="underline-offset-4 hover:text-rose-700 hover:underline"
+          >
+            About
+          </Link>
+          <span className="hidden md:inline">·</span>
+          <Link
+            to="/contact"
+            className="underline-offset-4 hover:text-rose-700 hover:underline"
+          >
+            Contact
+          </Link>
+          <span className="hidden md:inline">·</span>
+          <Link
             to="/privacy"
             className="underline-offset-4 hover:text-rose-700 hover:underline"
           >

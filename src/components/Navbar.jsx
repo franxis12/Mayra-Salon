@@ -44,12 +44,6 @@ function Navbar() {
           <NavLink to="/gallery" className={getNavLinkClass}>
             Gallery
           </NavLink>
-          <NavLink to="/about" className={getNavLinkClass}>
-            About
-          </NavLink>
-          <NavLink to="/contact" className={getNavLinkClass}>
-            Contact
-          </NavLink>
         </div>
 
         <div className="flex items-center gap-2">
@@ -76,12 +70,6 @@ function Navbar() {
               >
                 Sign out
               </button>
-              <NavLink
-                to="/contact"
-                className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
-              >
-                Book an appointment
-              </NavLink>
             </>
           ) : (
             <>
@@ -91,12 +79,6 @@ function Navbar() {
               >
                 Sign in
               </Link>
-              <NavLink
-                to="/contact"
-                className="inline-flex items-center rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 md:px-5"
-              >
-                Book an appointment
-              </NavLink>
             </>
           )}
         </div>

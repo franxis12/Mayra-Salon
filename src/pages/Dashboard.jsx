@@ -32,6 +32,7 @@ function Dashboard() {
     name: '',
     description: '',
     price: '',
+    costPrice: '',
     category: '',
     imageUrl: '',
     stock: '',
@@ -45,6 +46,7 @@ function Dashboard() {
   const [editingProductId, setEditingProductId] = useState(null)
   const [editForm, setEditForm] = useState({
     price: '',
+    costPrice: '',
   })
   const [locationRows, setLocationRows] = useState([])
   const [locationsLoading, setLocationsLoading] = useState(false)
@@ -237,6 +239,10 @@ function Dashboard() {
 
     try {
       const priceInCents = Math.round(Number(form.price || 0) * 100)
+      const costInCents =
+        form.costPrice !== '' && !Number.isNaN(Number(form.costPrice))
+          ? Math.round(Number(form.costPrice) * 100)
+          : null
       const stockNumber =
         form.stock !== '' && !Number.isNaN(Number(form.stock))
           ? Number(form.stock)
@@ -285,6 +291,7 @@ function Dashboard() {
           category: form.category || null,
           image_url: imageUrlToSave,
           price: priceInCents,
+          cost_price: costInCents,
           stock: stockNumber,
           sku: form.sku || null,
           location: locationCode,
@@ -313,6 +320,7 @@ function Dashboard() {
         name: '',
         description: '',
         price: '',
+        costPrice: '',
         category: '',
         imageUrl: '',
         stock: '',
@@ -496,9 +504,14 @@ function Dashboard() {
       typeof product.price === 'number'
         ? (product.price / 100).toFixed(2)
         : ''
+    const currentCost =
+      typeof product.cost_price === 'number'
+        ? (product.cost_price / 100).toFixed(2)
+        : ''
     setEditingProductId(product.id)
     setEditForm({
       price: currentPrice,
+      costPrice: currentCost,
     })
 
     if (!supabase) return
@@ -543,6 +556,7 @@ function Dashboard() {
     setEditingProductId(null)
     setEditForm({
       price: '',
+      costPrice: '',
     })
     setLocationRows([])
     setLocationsError('')
@@ -555,6 +569,10 @@ function Dashboard() {
     const priceInCents =
       editForm.price !== '' && !Number.isNaN(Number(editForm.price))
         ? Math.round(Number(editForm.price) * 100)
+        : null
+    const costInCents =
+      editForm.costPrice !== '' && !Number.isNaN(Number(editForm.costPrice))
+        ? Math.round(Number(editForm.costPrice) * 100)
         : null
 
     const validRows =
@@ -623,6 +641,7 @@ function Dashboard() {
       .from('products')
       .update({
         price: priceInCents,
+        cost_price: costInCents,
         stock: totalQuantity,
         location: primaryLocation,
       })
@@ -799,7 +818,7 @@ function Dashboard() {
                 placeholder="Short description of the product."
               />
             </div>
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-4">
               <div className="space-y-1.5">
                 <label
                   htmlFor="price"
@@ -818,6 +837,25 @@ function Dashboard() {
                   onChange={handleChange}
                   className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
                   placeholder="Ex: 25.50"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="costPrice"
+                  className="font-medium text-slate-800"
+                >
+                  Cost (USD, admin only)
+                </label>
+                <input
+                  id="costPrice"
+                  name="costPrice"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.costPrice}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+                  placeholder="Ex: 12.00"
                 />
               </div>
               <div className="space-y-1.5">
@@ -1030,6 +1068,28 @@ function Dashboard() {
                           ${((product.price ?? 0) / 100).toFixed(2)} ·{' '}
                           {product.active ? 'Visible in store' : 'Hidden'}
                         </p>
+                        {typeof product.cost_price === 'number' && (
+                          <p className="text-[11px] text-slate-500">
+                            Cost:{' '}
+                            <span className="font-semibold">
+                              ${((product.cost_price ?? 0) / 100).toFixed(2)}
+                            </span>{' '}
+                            · Profit per unit:{' '}
+                            {(() => {
+                              const profit =
+                                (product.price ?? 0) - (product.cost_price ?? 0)
+                              const profitClass =
+                                profit <= 0
+                                  ? 'font-semibold text-rose-600'
+                                  : 'font-semibold text-emerald-600'
+                              return (
+                                <span className={profitClass}>
+                                  ${(profit / 100).toFixed(2)}
+                                </span>
+                              )
+                            })()}
+                          </p>
+                        )}
                         <p className="text-[11px] text-slate-500">
                           {product.stock != null &&
                             !Number.isNaN(product.stock) && (
@@ -1076,7 +1136,7 @@ function Dashboard() {
 
                   {isEditing && (
                     <div className="mt-2 space-y-2 rounded-xl border border-rose-100 bg-white px-3 py-2 text-[11px]">
-                      <div className="grid gap-2 md:grid-cols-3">
+                      <div className="grid gap-2 md:grid-cols-4">
                         <div className="space-y-1">
                           <label
                             htmlFor={`edit-price-${product.id}`}
@@ -1094,6 +1154,25 @@ function Dashboard() {
                             onChange={handleEditChange}
                             className="w-full rounded-lg border border-rose-100 bg-white px-2 py-1.5 text-[11px] text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
                             placeholder="Ex: 25.50"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label
+                            htmlFor={`edit-cost-${product.id}`}
+                            className="font-medium text-slate-800"
+                          >
+                            Cost (USD)
+                          </label>
+                          <input
+                            id={`edit-cost-${product.id}`}
+                            name="costPrice"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={editForm.costPrice}
+                            onChange={handleEditChange}
+                            className="w-full rounded-lg border border-rose-100 bg-white px-2 py-1.5 text-[11px] text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+                            placeholder="Ex: 12.00"
                           />
                         </div>
                         <div className="space-y-1">
