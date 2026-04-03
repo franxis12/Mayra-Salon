@@ -7,10 +7,13 @@ import Gallery from './pages/Gallery.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import Store from './pages/Store.jsx'
+import Product from './pages/Product.jsx'
 import Checkout from './pages/Checkout.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Profile from './pages/Profile.jsx'
+import Privacy from './pages/Privacy.jsx'
+import Terms from './pages/Terms.jsx'
 
 function App() {
   return (
@@ -23,10 +26,13 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/store" element={<Store />} />
+        <Route path="/product/:id" element={<Product />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />

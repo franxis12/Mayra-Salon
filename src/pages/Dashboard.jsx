@@ -53,6 +53,17 @@ function Dashboard() {
   const [showTeamForm, setShowTeamForm] = useState(false)
   const [activeTab, setActiveTab] = useState('products')
   const [productSearch, setProductSearch] = useState('')
+  const [heroBanners, setHeroBanners] = useState([])
+  const [heroLoading, setHeroLoading] = useState(true)
+  const [heroError, setHeroError] = useState('')
+  const [heroForm, setHeroForm] = useState({
+    title: '',
+    linkUrl: '',
+    imageUrl: '',
+    active: true,
+  })
+  const [heroImageFile, setHeroImageFile] = useState(null)
+  const [savingHero, setSavingHero] = useState(false)
 
   const [teamForm, setTeamForm] = useState({
     name: '',
@@ -115,11 +126,35 @@ function Dashboard() {
     setTeamLoading(false)
   }
 
+  const loadHeroBanners = async () => {
+    if (!supabase) {
+      setHeroError(
+        'Supabase is not configured. Add your credentials to manage hero banners.',
+      )
+      setHeroLoading(false)
+      return
+    }
+
+    const { data, error: dbError } = await supabase
+      .from('hero_banners')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (dbError) {
+      setHeroError(dbError.message ?? 'We could not load hero banners.')
+      setHeroBanners([])
+    } else {
+      setHeroBanners(data ?? [])
+    }
+    setHeroLoading(false)
+  }
+
   useEffect(() => {
     if (authLoading) return
     if (!isAdmin) return
     loadProducts()
     loadTeam()
+    loadHeroBanners()
   }, [authLoading, isAdmin])
 
   const handleChange = (event) => {
@@ -135,6 +170,11 @@ function Dashboard() {
     setImageFile(file)
   }
 
+  const handleHeroImageFileChange = (event) => {
+    const file = event.target.files?.[0] ?? null
+    setHeroImageFile(file)
+  }
+
   const handleEditChange = (event) => {
     const { name, value } = event.target
     setEditForm((current) => ({ ...current, [name]: value }))
@@ -143,6 +183,14 @@ function Dashboard() {
   const handleTeamChange = (event) => {
     const { name, value, type, checked } = event.target
     setTeamForm((current) => ({
+      ...current,
+      [name]: type === 'checkbox' ? checked : value,
+    }))
+  }
+
+  const handleHeroChange = (event) => {
+    const { name, value, type, checked } = event.target
+    setHeroForm((current) => ({
       ...current,
       [name]: type === 'checkbox' ? checked : value,
     }))
@@ -349,6 +397,88 @@ function Dashboard() {
     loadTeam()
   }
 
+  const handleHeroSubmit = async (event) => {
+    event.preventDefault()
+    setHeroError('')
+
+    if (savingHero) return
+
+    if (!supabase) {
+      setHeroError('Supabase is not configured.')
+      return
+    }
+
+    if (!heroImageFile && !heroForm.imageUrl) {
+      setHeroError(
+        'Please select an image file or provide an image URL.',
+      )
+      return
+    }
+
+    setSavingHero(true)
+
+    try {
+      let imageUrlToSave = heroForm.imageUrl || null
+
+      if (heroImageFile) {
+        const fileExt = heroImageFile.name.split('.').pop()
+        const fileName = `${crypto.randomUUID?.() || Date.now()}.${
+          fileExt || 'jpg'
+        }`
+        const filePath = `hero/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from('hero-banners')
+          .upload(filePath, heroImageFile, {
+            cacheControl: '3600',
+            upsert: false,
+          })
+
+        if (uploadError) {
+          setHeroError(
+            uploadError.message ??
+              'We could not upload the hero image. Please try again.',
+          )
+          return
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from('hero-banners').getPublicUrl(filePath)
+
+        imageUrlToSave = publicUrl
+      }
+
+      const { error: insertError } = await supabase
+        .from('hero_banners')
+        .insert({
+          title: heroForm.title || null,
+          link_url: heroForm.linkUrl || null,
+          image_url: imageUrlToSave,
+          active: heroForm.active,
+        })
+
+      if (insertError) {
+        setHeroError(
+          insertError.message ?? 'We could not save the hero banner.',
+        )
+        return
+      }
+
+      setHeroForm({
+        title: '',
+        linkUrl: '',
+        imageUrl: '',
+        active: true,
+      })
+      setHeroImageFile(null)
+      setHeroLoading(true)
+      await loadHeroBanners()
+    } finally {
+      setSavingHero(false)
+    }
+  }
+
   const toggleActive = async (product) => {
     if (!supabase) return
     const { error: updateError } = await supabase
@@ -519,6 +649,30 @@ function Dashboard() {
     }
   }
 
+  const toggleHeroBannerActive = async (banner) => {
+    if (!supabase) return
+    const { error: updateError } = await supabase
+      .from('hero_banners')
+      .update({ active: !banner.active })
+      .eq('id', banner.id)
+
+    if (!updateError) {
+      loadHeroBanners()
+    }
+  }
+
+  const deleteHeroBanner = async (banner) => {
+    if (!supabase) return
+    const { error: deleteError } = await supabase
+      .from('hero_banners')
+      .delete()
+      .eq('id', banner.id)
+
+    if (!deleteError) {
+      loadHeroBanners()
+    }
+  }
+
   if (authLoading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
@@ -558,7 +712,7 @@ function Dashboard() {
         Admin panel
       </h1>
       <p className="mt-2 text-sm text-slate-600 md:text-base">
-        Manage store products and the salon team.
+        Manage store products, the salon team and homepage offers.
       </p>
 
       <div className="mt-6 inline-flex rounded-full bg-rose-50 p-1 text-xs">
@@ -583,6 +737,17 @@ function Dashboard() {
           }`}
         >
           Team
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('hero')}
+          className={`rounded-full px-4 py-1.5 font-semibold transition ${
+            activeTab === 'hero'
+              ? 'bg-white text-rose-700 shadow-sm'
+              : 'text-slate-600 hover:text-slate-800'
+          }`}
+        >
+          Hero carousel
         </button>
       </div>
 
@@ -1367,6 +1532,209 @@ function Dashboard() {
             })}
           </ul>
         </section>
+      )}
+
+      {activeTab === 'hero' && (
+        <div className="mt-10 space-y-6">
+          <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-base font-semibold text-slate-900">
+                  Hero carousel offers
+                </h2>
+                <p className="mt-1 text-[11px] text-slate-500 md:text-xs">
+                  Upload horizontal images for the hero section on the homepage.
+                  Recommended size: around{' '}
+                  <span className="font-semibold">1600x600px</span>, with the
+                  main content centered and a bit of margin on the sides. Keep
+                  each file under ~500KB so the page loads quickly.
+                </p>
+              </div>
+            </div>
+            <form
+              onSubmit={handleHeroSubmit}
+              className="mt-2 space-y-3 text-xs md:text-[13px]"
+            >
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="hero-title"
+                  className="font-medium text-slate-800"
+                >
+                  Short title (optional)
+                </label>
+                <input
+                  id="hero-title"
+                  name="title"
+                  type="text"
+                  value={heroForm.title}
+                  onChange={handleHeroChange}
+                  className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+                  placeholder="Ex: Summer color promo"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="hero-linkUrl"
+                  className="font-medium text-slate-800"
+                >
+                  Link when clicking the image (optional)
+                </label>
+                <input
+                  id="hero-linkUrl"
+                  name="linkUrl"
+                  type="text"
+                  value={heroForm.linkUrl}
+                  onChange={handleHeroChange}
+                  className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+                  placeholder="Ex: /store, /product/123 or https://external-link"
+                />
+              </div>
+              <div className="grid gap-3 md:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)]">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="hero-imageFile"
+                    className="font-medium text-slate-800"
+                  >
+                    Image file
+                  </label>
+                  <input
+                    id="hero-imageFile"
+                    name="heroImageFile"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleHeroImageFileChange}
+                    className="block w-full text-xs text-slate-700 file:mr-2 file:rounded-full file:border file:border-rose-200 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-rose-700 hover:file:border-rose-300 hover:file:bg-rose-50"
+                  />
+                  <p className="text-[11px] text-slate-500">
+                    If you prefer, you can paste a direct URL to an image
+                    instead of uploading a file.
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="hero-imageUrl"
+                    className="font-medium text-slate-800"
+                  >
+                    Image URL (optional)
+                  </label>
+                  <input
+                    id="hero-imageUrl"
+                    name="imageUrl"
+                    type="url"
+                    value={heroForm.imageUrl}
+                    onChange={handleHeroChange}
+                    className="w-full rounded-xl border border-rose-100 bg-white px-3 py-2 text-xs text-slate-900 outline-none ring-rose-200 placeholder:text-slate-400 focus:ring"
+                    placeholder="https://... (used only if no file is uploaded)"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  id="hero-active"
+                  name="active"
+                  type="checkbox"
+                  checked={heroForm.active}
+                  onChange={handleHeroChange}
+                  className="h-4 w-4 rounded border-rose-200 text-rose-600 focus:ring-rose-500"
+                />
+                <label
+                  htmlFor="hero-active"
+                  className="text-xs text-slate-800"
+                >
+                  Active banner (visible on the homepage)
+                </label>
+              </div>
+
+              {heroError && (
+                <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">
+                  {heroError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={savingHero}
+                className="inline-flex w-full items-center justify-center rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:opacity-60"
+              >
+                {savingHero ? 'Saving banner...' : 'Save banner'}
+              </button>
+            </form>
+          </section>
+
+          <section className="space-y-4 rounded-2xl border border-rose-100 bg-white/80 p-4 text-sm text-slate-700 shadow-sm">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold text-slate-900">
+                Current hero banners
+              </h2>
+            </div>
+            {heroLoading && (
+              <p className="text-xs text-slate-600">
+                Loading hero banners...
+              </p>
+            )}
+            {!heroLoading && !heroError && heroBanners.length === 0 && (
+              <p className="text-xs text-slate-600">
+                There are no hero banners yet. The homepage will only show the
+                default text in the hero section.
+              </p>
+            )}
+            {heroError && !heroLoading && (
+              <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">
+                {heroError}
+              </p>
+            )}
+            <ul className="space-y-2 text-xs">
+              {heroBanners.map((banner) => (
+                <li
+                  key={banner.id}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-rose-100 bg-white px-3 py-2"
+                >
+                  <div className="flex items-center gap-3">
+                    {banner.image_url && (
+                      <div className="h-14 w-24 overflow-hidden rounded-lg bg-rose-50">
+                        <img
+                          src={banner.image_url}
+                          alt={banner.title || 'Hero banner'}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {banner.title || 'Untitled banner'}
+                      </p>
+                      {banner.link_url && (
+                        <p className="text-[11px] text-slate-500">
+                          Link:{' '}
+                          <span className="break-all">{banner.link_url}</span>
+                        </p>
+                      )}
+                      <p className="text-[11px] text-slate-500">
+                        {banner.active ? 'Visible on homepage' : 'Hidden'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <button
+                      type="button"
+                      onClick={() => toggleHeroBannerActive(banner)}
+                      className="text-[11px] font-semibold text-rose-600 underline-offset-4 hover:underline"
+                    >
+                      {banner.active ? 'Hide' : 'Show'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteHeroBanner(banner)}
+                      className="text-[11px] font-semibold text-slate-500 underline-offset-4 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       )}
     </main>
   )

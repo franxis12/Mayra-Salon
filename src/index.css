@@ -105,6 +105,10 @@ body {
   }
 }
 
+.team-card {
+  perspective: 1000px;
+}
+
 /* Mapping of commonly used Tailwind classes to the variable system.
    Changing variables in :root updates the whole theme. */
 

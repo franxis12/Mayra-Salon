@@ -17,6 +17,7 @@ function Login() {
   const [postalCode, setPostalCode] = useState('')
   const [country, setCountry] = useState('United States')
   const [role, setRole] = useState('client')
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -28,6 +29,12 @@ function Login() {
     event.preventDefault()
     setError('')
     setLoading(true)
+
+    if (mode === 'register' && !acceptedTerms) {
+      setLoading(false)
+      setError('You must accept the Terms of Use and Privacy Policy to create an account.')
+      return
+    }
 
     const action = mode === 'login' ? signIn : signUp
     const { data, error: authError } = await action(email, password)
@@ -283,6 +290,34 @@ function Login() {
                 </label>
               </div>
             </div>
+
+            <div className="space-y-1.5 text-xs">
+              <label className="inline-flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(event) => setAcceptedTerms(event.target.checked)}
+                  className="mt-0.5 h-3.5 w-3.5 text-rose-600 focus:ring-rose-500"
+                />
+                <span className="text-[11px] text-slate-600">
+                  I have read and accept the{' '}
+                  <Link
+                    to="/terms"
+                    className="font-semibold text-rose-700 underline-offset-4 hover:underline"
+                  >
+                    Terms of Use
+                  </Link>{' '}
+                  and the{' '}
+                  <Link
+                    to="/privacy"
+                    className="font-semibold text-rose-700 underline-offset-4 hover:underline"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </span>
+              </label>
+            </div>
           </>
         )}
 
@@ -294,7 +329,7 @@ function Login() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || (mode === 'register' && !acceptedTerms)}
           className="inline-flex w-full items-center justify-center rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:opacity-70"
         >
           {loading
@@ -312,6 +347,7 @@ function Login() {
           onClick={() => {
             setMode(mode === 'login' ? 'register' : 'login')
             setError('')
+            setAcceptedTerms(false)
           }}
           className="font-semibold text-rose-700 underline-offset-4 hover:underline"
         >
